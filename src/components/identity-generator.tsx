@@ -4,12 +4,11 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { 
   RefreshCw, Copy, Check, MapPin, User, CreditCard, Globe, Mail, 
-  History, Code, Smartphone, Briefcase, Car, Plane, Wallet, Shield
+  History, Code, Smartphone, Briefcase, Car, Plane, Wallet
 } from "lucide-react"; 
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -234,7 +233,7 @@ export function IdentityGenerator({ initialLocale }: IdentityGeneratorProps) {
                  <CopyField label="Email" value={data.contact.email} icon={<Mail className="h-3 w-3" />} />
                  <CopyField label="Phone" value={data.contact.phone} icon={<Smartphone className="h-3 w-3" />} />
                  <div className="bg-muted/30 p-3 rounded-md text-xs italic text-muted-foreground leading-relaxed">
-                    "{data.personal.bio}"
+                    &quot;{data.personal.bio}&quot;
                  </div>
               </CardContent>
             </Card>
