@@ -2,7 +2,16 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { RefreshCw, Copy, Check, MapPin, User, CreditCard, Globe, Mail, Phone } from "lucide-react";
+import { 
+  RefreshCw, 
+  Copy, 
+  Check, 
+  MapPin, 
+  User, 
+  CreditCard, 
+  Globe, 
+  Mail
+} from "lucide-react"; // Removed unused 'Phone'
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -11,6 +20,39 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { locales } from "@/lib/locales";
 
+// Define the exact shape of the API response to avoid 'any'
+interface IdentityData {
+  fullName: string;
+  gender: string;
+  birthDate: string;
+  email: string;
+  phone: string;
+  username: string;
+  password: string;
+  job: {
+    company: string;
+    title: string;
+  };
+  address: {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country: string;
+  };
+  finance: {
+    creditCardNumber: string;
+    creditCardExpiry: string;
+    creditCardCvv: string;
+    iban: string;
+  };
+  internet: {
+    ip: string;
+    userAgent: string;
+    uuid: string;
+  };
+}
+
 interface IdentityGeneratorProps {
   initialLocale: string;
 }
@@ -18,10 +60,10 @@ interface IdentityGeneratorProps {
 export function IdentityGenerator({ initialLocale }: IdentityGeneratorProps) {
   const router = useRouter();
   const [loading, setLoading] = React.useState(false);
-  const [data, setData] = React.useState<any>(null);
+  // Replaced <any> with <IdentityData | null>
+  const [data, setData] = React.useState<IdentityData | null>(null);
   const [gender, setGender] = React.useState<string>("all");
 
-  // Fetch data from our API
   const fetchData = React.useCallback(async () => {
     setLoading(true);
     try {
@@ -29,21 +71,22 @@ export function IdentityGenerator({ initialLocale }: IdentityGeneratorProps) {
       if (gender !== "all") params.append("gender", gender);
 
       const res = await fetch(`/api/identity?${params}`);
-      const json = await res.json();
+      if (!res.ok) throw new Error("Failed to fetch");
+      
+      const json: IdentityData = await res.json();
       setData(json);
-    } catch (error) {
+    } catch { 
+      // Removed unused 'error' variable
       toast.error("Failed to generate identity");
     } finally {
       setLoading(false);
     }
   }, [initialLocale, gender]);
 
-  // Generate on mount or when locale changes
   React.useEffect(() => {
     fetchData();
   }, [fetchData]);
 
-  // Handle locale switch
   const handleLocaleChange = (newLocale: string) => {
     router.push(`/${newLocale}`);
   };
